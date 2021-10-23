@@ -1,6 +1,8 @@
 package de.dennisguse.opentracks.settings;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,18 +20,20 @@ import java.util.stream.IntStream;
 
 import de.dennisguse.opentracks.AbstractActivity;
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.adapters.SettingsCustomLayoutAdapter;
+import de.dennisguse.opentracks.adapters.SettingsCustomLayoutEditAdapter;
 import de.dennisguse.opentracks.content.data.Layout;
 import de.dennisguse.opentracks.content.data.DataField;
 import de.dennisguse.opentracks.databinding.ActivitySettingsCustomLayoutBinding;
 import de.dennisguse.opentracks.util.StatisticsUtils;
 
-public class SettingsCustomLayoutActivity extends AbstractActivity implements SettingsCustomLayoutAdapter.SettingsCustomLayoutItemClickListener {
+public class SettingsCustomLayoutEditActivity extends AbstractActivity implements SettingsCustomLayoutEditAdapter.SettingsCustomLayoutItemClickListener {
 
+    public static final String EXTRA_LAYOUT = "extraLayout";
     private ActivitySettingsCustomLayoutBinding viewBinding;
     private GridLayoutManager gridLayoutManager;
-    private SettingsCustomLayoutAdapter adapterFieldsVisible;
-    private SettingsCustomLayoutAdapter adapterFieldsHidden;
+    private SettingsCustomLayoutEditAdapter adapterFieldsVisible;
+    private SettingsCustomLayoutEditAdapter adapterFieldsHidden;
+    private String profile;
     private Layout layoutFieldsVisible;
     private Layout layoutFieldsHidden;
     private int numColumns;
@@ -38,10 +42,11 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // Recycler view with visible stats.
-        layoutFieldsVisible = StatisticsUtils.filterVisible(PreferencesUtils.getCustomLayout(), true);
-        adapterFieldsVisible = new SettingsCustomLayoutAdapter(this, this, layoutFieldsVisible);
+        Layout layout = getIntent().getParcelableExtra(EXTRA_LAYOUT);
+        profile = layout.getProfile();
+        layoutFieldsVisible = StatisticsUtils.filterVisible(layout, true);
+        adapterFieldsVisible = new SettingsCustomLayoutEditAdapter(this, this, layoutFieldsVisible);
 
         numColumns = PreferencesUtils.getLayoutColumns();
         RecyclerView recyclerViewVisible = viewBinding.recyclerViewVisible;
@@ -98,7 +103,7 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
 
         // Recycler view with not visible stats.
         layoutFieldsHidden = StatisticsUtils.filterVisible(PreferencesUtils.getCustomLayout(), false);
-        adapterFieldsHidden = new SettingsCustomLayoutAdapter(this, this, layoutFieldsHidden);
+        adapterFieldsHidden = new SettingsCustomLayoutEditAdapter(this, this, layoutFieldsHidden);
         RecyclerView recyclerViewNotVisible = viewBinding.recyclerViewNotVisible;
         recyclerViewNotVisible.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewNotVisible.setAdapter(adapterFieldsHidden);
@@ -108,10 +113,10 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
     protected void onPause() {
         super.onPause();
         if (!layoutFieldsVisible.getFields().isEmpty() || !layoutFieldsHidden.getFields().isEmpty()) {
-            Layout newLayout = new Layout(layoutFieldsVisible.getProfile());
-            newLayout.addFields(layoutFieldsVisible.getFields());
-            newLayout.addFields(layoutFieldsHidden.getFields());
-            PreferencesUtils.setCustomLayout(newLayout);
+            Layout layout = new Layout(profile);
+            layout.addFields(layoutFieldsVisible.getFields());
+            layout.addFields(layoutFieldsHidden.getFields());
+            PreferencesUtils.editCustomLayout(layout);
         }
     }
 

@@ -2,6 +2,7 @@ package de.dennisguse.opentracks.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 
 import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
@@ -21,10 +22,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 @RunWith(AndroidJUnit4.class)
 public class PreferencesUtilsTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
+    private final Resources resources = ApplicationProvider.getApplicationContext().getResources();
 
     @Test
     public void ExportTrackFileFormat_ok() {
@@ -73,6 +77,24 @@ public class PreferencesUtilsTest {
     }
 
     @Test
+    public void testGetAllCustomLayouts_default() {
+        // given
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+
+        // when
+        List<Layout> layouts = PreferencesUtils.getAllCustomLayouts();
+
+        // then
+        assertEquals(layouts.size(), 1);
+        assertTrue(layouts.get(0).getFields().size() > 0);
+        assertEquals(layouts.get(0).getProfile(), context.getString(R.string.stats_custom_layout_default_profile));
+        assertTrue(layouts.get(0).getFields().stream().anyMatch(DataField::isVisible));
+    }
+
+    @Test
     public void testGetCustomLayout_default() {
         // given
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -85,7 +107,7 @@ public class PreferencesUtilsTest {
 
         // then
         assertTrue(layout.getFields().size() > 0);
-        assertEquals(layout.getProfile(), context.getString(R.string.default_activity_default));
+        assertEquals(layout.getProfile(), context.getString(R.string.stats_custom_layout_default_profile));
         assertTrue(layout.getFields().stream().anyMatch(DataField::isVisible));
     }
 
@@ -95,7 +117,7 @@ public class PreferencesUtilsTest {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(
-                context.getString(R.string.stats_custom_layout_fields_key),
+                context.getString(R.string.stats_custom_layouts_key),
                 "run;"
                         + context.getString(R.string.stats_custom_layout_moving_time_key) + ",1,1;"
                         + context.getString(R.string.stats_custom_layout_distance_key) + ",1,0;"
@@ -133,7 +155,7 @@ public class PreferencesUtilsTest {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(
-                context.getString(R.string.stats_custom_layout_fields_key),
+                context.getString(R.string.stats_custom_layouts_key),
                 "walking;"
                         + context.getString(R.string.stats_custom_layout_moving_time_key) + ",1,1;"
                         + context.getString(R.string.stats_custom_layout_distance_key) + ",1,0;"
@@ -177,10 +199,12 @@ public class PreferencesUtilsTest {
         layoutSrc.addField(new DataField(context.getString(R.string.stats_custom_layout_speed_key), context.getString(R.string.stats_speed), false, false, false));
 
         // when
-        PreferencesUtils.setCustomLayout(layoutSrc);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getString(R.string.stats_custom_layouts_key), layoutSrc.toCsv());
+        editor.commit();
 
         // then
-        String csv = sharedPreferences.getString(context.getString(R.string.stats_custom_layout_fields_key), null);
+        String csv = sharedPreferences.getString(context.getString(R.string.stats_custom_layouts_key), null);
         assertNotNull(csv);
         assertEquals(csv,
                 "road cycling;"
@@ -197,5 +221,47 @@ public class PreferencesUtilsTest {
             assertEquals(layoutSrc.getFields().get(i).isVisible(), layoutDst.getFields().get(i).isVisible());
             assertEquals(layoutSrc.getFields().get(i).isPrimary(), layoutDst.getFields().get(i).isPrimary());
         }
+    }
+
+    @Test
+    public void testEditCustomLayout() {
+        // given a custom layout with two profiles
+        String cyclingProfile = "cycling" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR;
+
+        String runningProfile = "running" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_pace_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_pace_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getString(R.string.stats_custom_layouts_key), cyclingProfile + CsvConstants.LINE_SEPARATOR + runningProfile);
+        editor.apply();
+
+        List<Layout> layoutsBefore = PreferencesUtils.getAllCustomLayouts();
+
+        // when cyling profile is updated
+        String cyclingProfileUpdated = "cycling" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR;
+        Layout layout = Layout.fromCsv(cyclingProfileUpdated, resources);
+
+        PreferencesUtils.editCustomLayout(layout);
+
+        // then only updated profile is modified in the custom layouts
+        List<Layout> layoutsAfter = PreferencesUtils.getAllCustomLayouts();
+
+        assertEquals(layoutsBefore.size(), 2);
+        assertEquals(layoutsAfter.size(), 2);
+
+        assertEquals(layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count(), 4);
+        assertEquals(layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count(), 1);
     }
 }

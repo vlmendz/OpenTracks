@@ -65,7 +65,7 @@ public class StatisticsRecordingFragment extends Fragment {
             preferenceMetricUnits = PreferencesUtils.isMetricUnits();
         }
 
-        if (PreferencesUtils.isKey(R.string.stats_custom_layout_fields_key, key)) {
+        if (PreferencesUtils.isKey(R.string.stats_custom_layouts_key, key)) {
             updateUInecessary = true;
             layout = PreferencesUtils.getCustomLayout();
         }

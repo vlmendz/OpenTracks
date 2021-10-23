@@ -64,6 +64,9 @@
     <string name="settings_import" translatable="false">settingsImport</string>
     <string name="settings_export" translatable="false">settingsExport</string>
 
+    <!-- Stats layout customization default profile -->
+    <string name="stats_custom_layout_default_profile">Default Profile</string>
+
     <string name="default_activity_key" translatable="false">defaultActivity</string>
     <string name="default_activity_default" translatable="false">@string/activity_type_unknown</string>
     <string-array name="activity_types">
@@ -317,7 +320,7 @@
     <integer name="stats_custom_layout_columns_default" translatable="false">2</integer>
 
     <!-- Stats layout customization: key -->
-    <string name="stats_custom_layout_fields_key" translatable="false">statsCustomLayoutFieldsKey</string>
+    <string name="stats_custom_layouts_key" translatable="false">statsCustomLayoutFieldsKey</string>
     <!-- Stats keys -->
     <string name="stats_custom_layout_distance_key" translatable="false">distance</string>
     <string name="stats_custom_layout_total_time_key" translatable="false">total_time</string>
