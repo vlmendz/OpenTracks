@@ -217,8 +217,7 @@ public abstract class BluetoothLeSensorPreference extends DialogPreference {
 
             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
             scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
-
-            scanner.startScan(scanFilter, scanSettingsBuilder.build(), scanCallback);
+            scanner.startScan(scanCallback);
         }
 
         //Behave like ListPreferenceDialogFragmentCompat, but uses a custom listAdapter.
