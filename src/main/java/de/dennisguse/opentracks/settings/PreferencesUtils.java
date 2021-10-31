@@ -539,12 +539,15 @@ public class PreferencesUtils {
         return typedArrays;
     }
 
+    private static String buildDefaultFields() {
+        List<TypedArray> fieldsArrays = getMultiTypedArray("stats_custom_layout_fields_default_value");
+        return fieldsArrays.stream().map(i -> i.getString(0) + CsvConstants.PROPERTY_SEPARATOR + i.getString(1)).collect(Collectors.joining(CsvConstants.ITEM_SEPARATOR))
+                + CsvConstants.ITEM_SEPARATOR;
+    }
+
     @SuppressLint("ResourceType")
     static String buildDefaultLayout() {
-        List<TypedArray> fieldsArrays = getMultiTypedArray("stats_custom_layout_fields_default_value");
-        return resources.getString(R.string.stats_custom_layout_default_profile) + CsvConstants.ITEM_SEPARATOR
-                + fieldsArrays.stream().map(i -> i.getString(0) + CsvConstants.PROPERTY_SEPARATOR + i.getString(1)).collect(Collectors.joining(CsvConstants.ITEM_SEPARATOR))
-                + CsvConstants.ITEM_SEPARATOR;
+        return resources.getString(R.string.stats_custom_layout_default_profile) + CsvConstants.ITEM_SEPARATOR + buildDefaultFields();
     }
 
     public static Layout getCustomLayout() {
@@ -581,6 +584,12 @@ public class PreferencesUtils {
         }
 
         setString(R.string.stats_custom_layouts_key, layouts.stream().map(Layout::toCsv).collect(Collectors.joining(CsvConstants.LINE_SEPARATOR)));
+    }
+
+    public static void addCustomLayoutProfile(String profile) {
+        String newLayoutCsv = profile + CsvConstants.ITEM_SEPARATOR + buildDefaultFields();
+        String customLayoutCsv = getString(R.string.stats_custom_layouts_key, buildDefaultLayout()) + CsvConstants.LINE_SEPARATOR + newLayoutCsv;
+        setString(R.string.stats_custom_layouts_key, customLayoutCsv);
     }
 
     public static void resetCustomLayoutPreferences() {

@@ -50,7 +50,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
         okButton.setEnabled(false);
         okButton.setOnClickListener(view -> {
             clearAndHideEditLayout();
-            PreferencesUtils.addNewProfile(addProfileEditText.getText().toString());
+            PreferencesUtils.addCustomLayoutProfile(addProfileEditText.getText().toString());
         });
 
         addProfileLayout = findViewById(R.id.custom_layout_list_add_linear_layout);
