@@ -19,7 +19,7 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 
 public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<Layout> layoutList;
+    private List<Layout> layoutList;
     private final Context context;
     private SettingsCustomLayoutProfileClickListener itemClickListener;
 
@@ -54,6 +54,11 @@ public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<Recycl
 
     public List<Layout> getLayouts() {
         return layoutList;
+    }
+
+    public void reloadLayouts() {
+        layoutList = PreferencesUtils.getAllCustomLayouts();
+        notifyDataSetChanged();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

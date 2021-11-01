@@ -37,6 +37,8 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTitle(getString(R.string.stats_custom_layout_list_title));
+
         adapter = new SettingsCustomLayoutListAdapter(this, this);
         recyclerView = viewBinding.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,19 +51,15 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
 
         okButton.setEnabled(false);
         okButton.setOnClickListener(view -> {
-            clearAndHideEditLayout();
             PreferencesUtils.addCustomLayoutProfile(addProfileEditText.getText().toString());
+            clearAndHideEditLayout();
+            adapter.reloadLayouts();
         });
 
         addProfileLayout = findViewById(R.id.custom_layout_list_add_linear_layout);
         addProfileInputLayout = findViewById(R.id.custom_layout_list_input_layout);
         addProfileEditText = findViewById(R.id.custom_layout_list_edit_name);
         addProfileEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (start < before) {
@@ -79,10 +77,19 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.reloadLayouts();
     }
 
     @Override

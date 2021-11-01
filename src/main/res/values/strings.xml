@@ -369,6 +369,7 @@ limitations under the License.
 
     <string name="settings_reset">Reset</string>
     <!-- Custom Layout -->
+    <string name="stats_custom_layout_list_title">Layouts</string>
     <string name="custom_layout_list_edit_name">Type profile\'s name to add</string>
     <string name="custom_layout_list_edit_already_exists">Profile\'s name already exists</string>
     <!-- Custom Layout Reset -->

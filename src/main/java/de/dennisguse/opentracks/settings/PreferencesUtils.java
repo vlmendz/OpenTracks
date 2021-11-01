@@ -25,6 +25,7 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.documentfile.provider.DocumentFile;
@@ -586,9 +587,12 @@ public class PreferencesUtils {
         setString(R.string.stats_custom_layouts_key, layouts.stream().map(Layout::toCsv).collect(Collectors.joining(CsvConstants.LINE_SEPARATOR)));
     }
 
-    public static void addCustomLayoutProfile(String profile) {
+    public static void addCustomLayoutProfile(@NonNull String profile) {
+        Log.e("probando", profile);
         String newLayoutCsv = profile + CsvConstants.ITEM_SEPARATOR + buildDefaultFields();
+        Log.e("probando", newLayoutCsv);
         String customLayoutCsv = getString(R.string.stats_custom_layouts_key, buildDefaultLayout()) + CsvConstants.LINE_SEPARATOR + newLayoutCsv;
+        Log.e("probando", customLayoutCsv);
         setString(R.string.stats_custom_layouts_key, customLayoutCsv);
     }
 
