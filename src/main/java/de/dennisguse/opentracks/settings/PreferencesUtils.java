@@ -541,13 +541,13 @@ public class PreferencesUtils {
         return typedArrays;
     }
 
+    @SuppressLint("ResourceType")
     private static String buildDefaultFields() {
         List<TypedArray> fieldsArrays = getMultiTypedArray("stats_custom_layout_fields_default_value");
         return fieldsArrays.stream().map(i -> i.getString(0) + CsvConstants.PROPERTY_SEPARATOR + i.getString(1)).collect(Collectors.joining(CsvConstants.ITEM_SEPARATOR))
                 + CsvConstants.ITEM_SEPARATOR;
     }
 
-    @SuppressLint("ResourceType")
     static String buildDefaultLayout() {
         return resources.getString(R.string.stats_custom_layout_default_profile) + CsvConstants.ITEM_SEPARATOR + buildDefaultFields();
     }
