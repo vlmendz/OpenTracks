@@ -65,7 +65,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
         addProfileEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (start < before) {
+                if (s == null || s.toString().isEmpty()) {
                     okButton.setEnabled(false);
                     return;
                 }

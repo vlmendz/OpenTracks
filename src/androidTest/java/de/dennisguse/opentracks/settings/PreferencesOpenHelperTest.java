@@ -33,7 +33,7 @@ public class PreferencesOpenHelperTest {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String oldCustomLayoutCsv = context.getString(R.string.activity_type_unknown) + CsvConstants.ITEM_SEPARATOR
-                + "distance,1,1" + CsvConstants.ITEM_SEPARATOR + "speed,1,1" + CsvConstants.ITEM_SEPARATOR;
+                + "distance,1,1,0" + CsvConstants.ITEM_SEPARATOR + "speed,1,1,0" + CsvConstants.ITEM_SEPARATOR;
         editor.putString(context.getString(R.string.stats_custom_layouts_key), oldCustomLayoutCsv);
         editor.putInt(context.getString(R.string.prefs_last_version_key), 1);
 

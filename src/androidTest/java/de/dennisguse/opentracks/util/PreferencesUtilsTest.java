@@ -209,10 +209,10 @@ public class PreferencesUtilsTest {
         assertNotNull(csv);
         assertEquals(csv,
                 "road cycling;"
-                + context.getString(R.string.stats_custom_layout_moving_time_key) + ",1,1;"
-                + context.getString(R.string.stats_custom_layout_distance_key) + ",1,0;"
-                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + ",0,1;"
-                + context.getString(R.string.stats_custom_layout_speed_key) + ",0,0;");
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + ",1,1,0;"
+                + context.getString(R.string.stats_custom_layout_distance_key) + ",1,0,0;"
+                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + ",0,1,0;"
+                + context.getString(R.string.stats_custom_layout_speed_key) + ",0,0,0;");
 
         Layout layoutDst = PreferencesUtils.getCustomLayout();
         assertEquals(layoutSrc.getProfile(), layoutDst.getProfile());
