@@ -54,7 +54,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
 
         okButton.setEnabled(false);
         okButton.setOnClickListener(view -> {
-            PreferencesUtils.addCustomLayoutProfile(addProfileEditText.getText().toString());
+            PreferencesUtils.addCustomLayout(addProfileEditText.getText().toString());
             clearAndHideEditLayout();
             adapter.reloadLayouts();
         });
@@ -70,7 +70,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
                     return;
                 }
 
-                if (adapter.getLayouts().stream().anyMatch(layout -> layout.getProfile().equalsIgnoreCase(s.toString()))) {
+                if (adapter.getLayouts().stream().anyMatch(layout -> layout.equals(s.toString()))) {
                     okButton.setEnabled(false);
                     addProfileInputLayout.setError(getString(R.string.custom_layout_list_edit_already_exists));
                 } else {

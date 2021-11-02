@@ -62,12 +62,13 @@ public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<Recycl
 
     public void removeLayout(int position) {
         layoutList.remove(position);
-        PreferencesUtils.
+        PreferencesUtils.updateCustomLayouts(layoutList);
         notifyDataSetChanged();
     }
 
     public void restoreItem(Layout layout, int position) {
         layoutList.add(position, layout);
+        PreferencesUtils.updateCustomLayouts(layoutList);
         notifyDataSetChanged();
     }
 
@@ -83,7 +84,7 @@ public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<Recycl
         @Override
         public void onClick(View view) {
             String profile = (String) view.getTag();
-            Optional<Layout> optionalLayout = layoutList.stream().filter(layout -> layout.getProfile().equals(profile)).findFirst();
+            Optional<Layout> optionalLayout = layoutList.stream().filter(layout -> layout.equals(new Layout(profile))).findFirst();
             optionalLayout.ifPresent(itemClickListener::onSettingsCustomLayoutProfileClicked);
         }
     }

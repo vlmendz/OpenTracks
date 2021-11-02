@@ -1,8 +1,6 @@
 package de.dennisguse.opentracks.settings;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +14,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import de.dennisguse.opentracks.AbstractActivity;
@@ -116,7 +116,7 @@ public class SettingsCustomLayoutEditActivity extends AbstractActivity implement
             Layout layout = new Layout(profile);
             layout.addFields(layoutFieldsVisible.getFields());
             layout.addFields(layoutFieldsHidden.getFields());
-            PreferencesUtils.editCustomLayout(layout);
+            PreferencesUtils.updateCustomLayout(layout);
         }
     }
 

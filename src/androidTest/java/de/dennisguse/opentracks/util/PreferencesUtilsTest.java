@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -224,7 +225,9 @@ public class PreferencesUtilsTest {
     }
 
     @Test
-    public void testEditCustomLayout() {
+    public void testEditCustomLayouts() {
+        // update all custom layouts
+
         // given a custom layout with two profiles
         String cyclingProfile = "cycling" + CsvConstants.ITEM_SEPARATOR
                 + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
@@ -251,9 +254,55 @@ public class PreferencesUtilsTest {
                 + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
                 + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
                 + context.getString(R.string.stats_custom_layout_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR;
-        Layout layout = Layout.fromCsv(cyclingProfileUpdated, resources);
 
-        PreferencesUtils.editCustomLayout(layout);
+        List<Layout> layoutsToBeUpdated = new ArrayList<>();
+        layoutsToBeUpdated.add(Layout.fromCsv(cyclingProfileUpdated, resources));
+        layoutsToBeUpdated.add(Layout.fromCsv(runningProfile, resources));
+
+        PreferencesUtils.updateCustomLayouts(layoutsToBeUpdated);
+
+        // then only updated profile is modified in the custom layouts
+        List<Layout> layoutsAfter = PreferencesUtils.getAllCustomLayouts();
+
+        assertEquals(layoutsBefore.size(), 2);
+        assertEquals(layoutsAfter.size(), 2);
+
+        assertEquals(layoutsBefore.get(0).getFields().stream().filter(DataField::isVisible).count(), 4);
+        assertEquals(layoutsAfter.get(0).getFields().stream().filter(DataField::isVisible).count(), 1);
+    }
+
+    @Test
+    public void testEditCustomLayout() {
+        // Update only one custom layout
+
+        // given a custom layout with two profiles
+        String cyclingProfile = "cycling" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR;
+
+        String runningProfile = "running" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_pace_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_pace_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getString(R.string.stats_custom_layouts_key), cyclingProfile + CsvConstants.LINE_SEPARATOR + runningProfile);
+        editor.apply();
+
+        List<Layout> layoutsBefore = PreferencesUtils.getAllCustomLayouts();
+
+        // when cyling profile is updated
+        String cyclingProfileUpdated = "cycling" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_moving_time_key) + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.PROPERTY_SEPARATOR + "1" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_distance_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_average_moving_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR
+                + context.getString(R.string.stats_custom_layout_speed_key) + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.PROPERTY_SEPARATOR + "0" + CsvConstants.ITEM_SEPARATOR;
+        Layout layoutToBeUpdated = Layout.fromCsv(cyclingProfileUpdated, resources);
+        PreferencesUtils.updateCustomLayout(layoutToBeUpdated);
 
         // then only updated profile is modified in the custom layouts
         List<Layout> layoutsAfter = PreferencesUtils.getAllCustomLayouts();

@@ -63,6 +63,11 @@ public class Layout implements Parcelable {
         dataFields.remove(dataField);
     }
 
+    public void replaceAllFields(List<DataField> newFields) {
+        dataFields.clear();
+        addFields(newFields);
+    }
+
     public List<DataField> getFields() {
         return new ArrayList<>(dataFields);
     }
@@ -74,6 +79,14 @@ public class Layout implements Parcelable {
 
     public String getProfile() {
         return profile;
+    }
+
+    public boolean equals(Layout layout) {
+        return this.profile.equalsIgnoreCase(layout.getProfile());
+    }
+
+    public boolean equals(String profile) {
+        return this.profile.equalsIgnoreCase(profile);
     }
 
     public String toCsv() {
