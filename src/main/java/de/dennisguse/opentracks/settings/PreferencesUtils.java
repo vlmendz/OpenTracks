@@ -588,11 +588,8 @@ public class PreferencesUtils {
     }
 
     public static void addCustomLayoutProfile(@NonNull String profile) {
-        Log.e("probando", profile);
         String newLayoutCsv = profile + CsvConstants.ITEM_SEPARATOR + buildDefaultFields();
-        Log.e("probando", newLayoutCsv);
         String customLayoutCsv = getString(R.string.stats_custom_layouts_key, buildDefaultLayout()) + CsvConstants.LINE_SEPARATOR + newLayoutCsv;
-        Log.e("probando", customLayoutCsv);
         setString(R.string.stats_custom_layouts_key, customLayoutCsv);
     }
 

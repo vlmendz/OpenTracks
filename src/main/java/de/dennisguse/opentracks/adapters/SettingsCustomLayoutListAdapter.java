@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.content.data.DataField;
 import de.dennisguse.opentracks.content.data.Layout;
 import de.dennisguse.opentracks.settings.PreferencesUtils;
 
@@ -58,6 +57,17 @@ public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<Recycl
 
     public void reloadLayouts() {
         layoutList = PreferencesUtils.getAllCustomLayouts();
+        notifyDataSetChanged();
+    }
+
+    public void removeLayout(int position) {
+        layoutList.remove(position);
+        PreferencesUtils.
+        notifyDataSetChanged();
+    }
+
+    public void restoreItem(Layout layout, int position) {
+        layoutList.add(position, layout);
         notifyDataSetChanged();
     }
 

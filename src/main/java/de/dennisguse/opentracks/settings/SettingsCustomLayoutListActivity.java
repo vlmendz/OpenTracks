@@ -12,9 +12,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,6 +25,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.adapters.SettingsCustomLayoutListAdapter;
 import de.dennisguse.opentracks.content.data.Layout;
 import de.dennisguse.opentracks.databinding.ActivitySettingsCustomLayoutListBinding;
+import de.dennisguse.opentracks.util.SwipeToDeleteCallback;
 
 public class SettingsCustomLayoutListActivity extends AbstractActivity implements SettingsCustomLayoutListAdapter.SettingsCustomLayoutProfileClickListener {
 
@@ -37,7 +40,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.stats_custom_layout_list_title));
+        setTitle(getString(R.string.custom_layout_list_title));
 
         adapter = new SettingsCustomLayoutListAdapter(this, this);
         recyclerView = viewBinding.recyclerView;
@@ -84,6 +87,27 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
             public void afterTextChanged(Editable s) {
             }
         });
+
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                final int position = viewHolder.getAdapterPosition();
+                final Layout item = adapter.getLayouts().get(position);
+
+                adapter.removeLayout(position);
+
+                Snackbar snackbar = Snackbar.make(recyclerView, getString(R.string.custom_layout_list_layout_removed), Snackbar.LENGTH_LONG);
+                snackbar.setAction(getString(R.string.generic_undo).toUpperCase(), view -> {
+                    adapter.restoreItem(item, position);
+                    recyclerView.scrollToPosition(position);
+                });
+
+                snackbar.show();
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
