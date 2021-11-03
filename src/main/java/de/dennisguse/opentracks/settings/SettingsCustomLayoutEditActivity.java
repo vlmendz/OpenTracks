@@ -107,6 +107,8 @@ public class SettingsCustomLayoutEditActivity extends AbstractActivity implement
         RecyclerView recyclerViewNotVisible = viewBinding.recyclerViewNotVisible;
         recyclerViewNotVisible.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewNotVisible.setAdapter(adapterFieldsHidden);
+
+        setTitle(profile);
     }
 
     @Override
