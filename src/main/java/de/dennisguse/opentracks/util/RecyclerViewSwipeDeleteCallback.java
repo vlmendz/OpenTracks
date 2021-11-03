@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import de.dennisguse.opentracks.R;
 
-abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
+abstract public class RecyclerViewSwipeDeleteCallback extends ItemTouchHelper.Callback {
 
     Context context;
     private final Paint clearPaint;
@@ -26,8 +27,7 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
     private final int intrinsicWidth;
     private final int intrinsicHeight;
 
-
-    public SwipeToDeleteCallback(Context context) {
+    public RecyclerViewSwipeDeleteCallback(Context context) {
         this.context = context;
         background = new ColorDrawable();
         backgroundColor = context.getResources().getColor(R.color.colorBgDelete);

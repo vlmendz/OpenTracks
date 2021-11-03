@@ -84,7 +84,7 @@ public class SettingsCustomLayoutListAdapter extends RecyclerView.Adapter<Recycl
         @Override
         public void onClick(View view) {
             String profile = (String) view.getTag();
-            Optional<Layout> optionalLayout = layoutList.stream().filter(layout -> layout.equals(new Layout(profile))).findFirst();
+            Optional<Layout> optionalLayout = layoutList.stream().filter(layout -> layout.sameProfile(new Layout(profile))).findFirst();
             optionalLayout.ifPresent(itemClickListener::onSettingsCustomLayoutProfileClicked);
         }
     }

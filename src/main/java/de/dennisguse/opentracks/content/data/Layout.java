@@ -81,11 +81,11 @@ public class Layout implements Parcelable {
         return profile;
     }
 
-    public boolean equals(Layout layout) {
+    public boolean sameProfile(Layout layout) {
         return this.profile.equalsIgnoreCase(layout.getProfile());
     }
 
-    public boolean equals(String profile) {
+    public boolean sameProfile(String profile) {
         return this.profile.equalsIgnoreCase(profile);
     }
 

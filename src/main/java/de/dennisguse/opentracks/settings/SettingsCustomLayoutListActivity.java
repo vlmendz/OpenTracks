@@ -25,7 +25,7 @@ import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.adapters.SettingsCustomLayoutListAdapter;
 import de.dennisguse.opentracks.content.data.Layout;
 import de.dennisguse.opentracks.databinding.ActivitySettingsCustomLayoutListBinding;
-import de.dennisguse.opentracks.util.SwipeToDeleteCallback;
+import de.dennisguse.opentracks.util.RecyclerViewSwipeDeleteCallback;
 
 public class SettingsCustomLayoutListActivity extends AbstractActivity implements SettingsCustomLayoutListAdapter.SettingsCustomLayoutProfileClickListener {
 
@@ -70,7 +70,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
                     return;
                 }
 
-                if (adapter.getLayouts().stream().anyMatch(layout -> layout.equals(s.toString()))) {
+                if (adapter.getLayouts().stream().anyMatch(layout -> layout.sameProfile(s.toString()))) {
                     okButton.setEnabled(false);
                     addProfileInputLayout.setError(getString(R.string.custom_layout_list_edit_already_exists));
                 } else {
@@ -88,7 +88,13 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
             }
         });
 
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+        RecyclerViewSwipeDeleteCallback recyclerViewSwipeDeleteCallback = new RecyclerViewSwipeDeleteCallback(this) {
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                // When there's only one profile it cannot be deleted (so, "disable" movements: drag flagas and swipe flags).
+                return adapter.getItemCount() > 1 ? makeMovementFlags(0, ItemTouchHelper.LEFT) : makeMovementFlags(0, 0);
+            }
+
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 final int position = viewHolder.getAdapterPosition();
@@ -106,7 +112,7 @@ public class SettingsCustomLayoutListActivity extends AbstractActivity implement
             }
         };
 
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(recyclerViewSwipeDeleteCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
     }
 

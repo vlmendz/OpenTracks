@@ -35,13 +35,11 @@ import java.time.Duration;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.content.data.DataField;
 import de.dennisguse.opentracks.content.data.Distance;
 import de.dennisguse.opentracks.content.data.Layout;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
@@ -569,7 +567,7 @@ public class PreferencesUtils {
 
     public static void updateCustomLayout(@NonNull Layout layout) {
         List<Layout> preferenceLayouts = PreferencesUtils.getAllCustomLayouts();
-        Optional<Layout> layoutToBeUpdated = preferenceLayouts.stream().filter(l -> l.equals(layout)).findFirst();
+        Optional<Layout> layoutToBeUpdated = preferenceLayouts.stream().filter(l -> l.sameProfile(layout)).findFirst();
         if (layoutToBeUpdated.isPresent()) {
             layoutToBeUpdated.get().replaceAllFields(layout.getFields());
             PreferencesUtils.updateCustomLayouts(preferenceLayouts);
